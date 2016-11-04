@@ -13,7 +13,9 @@ import java.util.List;
  */
 public class Var {
     public static List<Category> categoryArrayList=new ArrayList<>();
+
     public static Client client;
     public static Client subClient;
+    public static int eventForCategories=0;
 
 }

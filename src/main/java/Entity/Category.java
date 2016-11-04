@@ -2,9 +2,7 @@ package Entity;
 
 import Controller.ControllPage;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
 import org.jboss.logging.annotations.Pos;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -23,6 +21,7 @@ public class Category {
     String urlCategory;
     int totalPost;
     String image;
+    String name;
 
     public String getImage() {
         return image;
@@ -77,8 +76,17 @@ public class Category {
         this.imageByPost = imageByPost;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Category(String url) {
         urlCategory = url;
+        name=url.substring(30);
         Document doc = null;
         try {
             doc = ControllPage.getDocmentInItemCategoryPage(url);
@@ -87,11 +95,14 @@ public class Category {
 
             String postCount = doc.select("div.btn-post-follow").html();
             totalPost = Integer.parseInt(postCount.split(" ")[0]);
-            for (int count = 0; count < totalPost / 16 + 1; count++) {
+            for (int count = 1; count < (totalPost / 16)+1 ; count++) {
                 Document docByCount = ControllPage.getDocmentInItemCategoryPage(url + "?page=" + count);
                 Elements elements = docByCount.select("div.box-top>a");
                 for (Element e : elements) {
+                    if(e.attr("abs:href").compareTo("https://viblo.asia/tran.van.cuong/posts/DzVGpLBXGnW")==0){
+                        System.out.println("hello");
 
+                    }
                     postUrls.add(e.attr("abs:href"));
                     imageByPost.add(e.select("img").attr("data-original"));
                     System.out.println(e.attr("abs:href"));
@@ -99,8 +110,11 @@ public class Category {
                 }
 
             }
+            Var.eventForCategories++;
+            System.out.println("da load dc "+ Var.eventForCategories);
+
         } catch (IOException e) {
-            System.out.println("ko ket noi ddn category");
+            System.out.println("ko ket noi dc category : "+urlCategory);
         }
 
     }

@@ -1,6 +1,6 @@
 package Entity;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import Controller.ControllPage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -20,7 +20,6 @@ public class Post {
     String url;
     String byCategory;
     String image;
-
     public String getByCategory() {
         return byCategory;
     }
@@ -50,18 +49,27 @@ public class Post {
             byCategory=category;
             this.image=image;
             SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            Document doc = Jsoup.connect(url).timeout(10000).
-                    userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2").
-                    get();
+            Document doc = Jsoup.connect(url).timeout(60000).
+                    userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.2 (KHTML, like Gecko) Chrome/15.0.874.120 Safari/535.2")
+                    .header("Cookie","remember_82e5d2c56bdd0811318f0cf078b78bfc=eyJpdiI6IkVcL0Y2SFwvaVNWNFYwcmFQYzU0aUZUQT09IiwidmFsdWUiOiJQNks3Q01Ld3hVbHF5OUdTd0JzbUFRQnVnd085YURBWm5FK01cLzdTckpTVXd2VnhSVmxoOUltQ3lmK2RuNHRGUEZDRjZrSFdwdVdGdEkrZkVIRVM1M012bGFcL3ZIRVY2eDdaWE1DZ3JNU2k4PSIsIm1hYyI6IjlmN2I1Nzg5YzQ2ZDVkYmRlZmM0ZGEyMjY2Y2MyZWIwYWFkMTk4MzMxMDY4OWQ1MDFmYWI3OTYxYjNmZjZiNTgifQ%3D%3D; _ga=GA1.2.1627860303.1475825973; ")
+
+                    .get();
             this.title=doc.select("p.post-title").html();
+            if(title.compareTo("Container Orchestration and Rancher")==0){
+                System.out.println("hello: "+url);
+            }
+
             this.body=doc.select("section.markdownContent").html();
             String dateInPost=doc.select("div.post-in-theme>span").html();
-            /*try {
-                this.createAt = formatter.parse(dateInPost);
+            String[] datetime=dateInPost.split(" ");
+            try {
+                this.createAt = formatter.parse(datetime[1]);
             } catch (ParseException e1) {
+                this.createAt= ControllPage.stringToDate(dateInPost);
+                //this.createAt=new Date(System.currentTimeMillis());;
+            }catch (Exception e2){
                 System.out.println("Loi dinh dang ngay thang");
-                this.createAt=new Date(System.currentTimeMillis());;
-            }*/
+            }
         } catch (IOException e) {
             System.out.println("ko ket noi dc voi bai viet : " +url);
 
